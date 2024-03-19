@@ -19,9 +19,10 @@ type
   BlotObj* {.importc:"Blot".} = ref object of RootObj# 
     blotName*: cstring
     # #className*: string
-    # length*: proc ():cint {.closure.}
+    length*: proc ():cint {.closure.}
     # value*: proc():JsObject {.closure.}
 
+proc blotName(_: typedesc[BlotObj]): cstring {.importCpp: "Blot.blotName".}
 #[
 const options = {
   debug: 'info',
@@ -45,7 +46,6 @@ proc newQuill*(id:string;
                debug:string = ""
                ):QuillObj =
   ## theme= snow|bubble
-  echo "ok"
   var config = newJsObject()
   config["theme"] = theme.cstring
   if placeholder != "":
@@ -90,19 +90,21 @@ proc getSelectionBind(api:QuillObj; focus:bool = false):JsObject {.importcpp:"#.
   # getSelection(focus = false): { index: number, length: number }
 
 proc getSelection*(api:QuillObj; focus:bool = false):tuple[index,length:int] =
-  echo "ok"
   var tmp = api.getSelectionBind(focus)
   return (tmp["index"].to(int), tmp["length"].to(int))
 
 
 proc getLineBind(api:QuillObj; index:cint):tuple[line:BlotObj;offset:cint] {.importcpp:"#.getLine(@)".}
 # [Blot, Number]
-proc getLineBind2(api:QuillObj; index:cint):seq[JsObject] {.importcpp:"#.getLine(@)".}
+#proc getLineBind2(api:QuillObj; index:cint):seq[JsObject] {.importcpp:"#.getLine(@)".}
 
 proc getLine*(api:QuillObj; index:int):tuple[line:BlotObj;offset:int] =
   #var (line,offset) = api.getLineBind2(index.cint)
   var tmp = api.getLineBind(index.cint)
-  echo repr tmp[1]
-  #return (BlotObj(tmp[0]), tmp[1].int)
+  echo "Line: ", tmp[0].length()
+  echo "Offset: ", tmp[1]
+  return tmp
+  #echo repr tmp[1]
+  #return #(BlotObj(tmp[0]), tmp[1].int)
 
 #proc length*(blot:BlotObj):cint {.importcpp:"#.length()".}

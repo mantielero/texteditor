@@ -15,13 +15,18 @@ proc onTextChangeCallback(delta, oldDelta:DeltaObj; source: cstring) =
   elif source == "user":
     #callJs("console.log","A user action triggered this change.")
     echo "USER"
-    var (index,length0) = q.getSelection()
+    #var (index,length0) = q.getSelection()
     #echo "index:",index
     #echo "length:", length
-    var (line, offset) = q.getLine(index)
+    var line:BlotObj = q.getLine(1)[0]
+    #echoThis(line)
+    #echo "Line length: ", line.length()
     #discard line.length()
-    echo line.blotName
-    echo "ok"
+    echo "Blot name:"
+    #echo line.blotName
+    echo line.length()
+    echo "end"
+    #echo "ok"
     #echo "offset:", offset
     #echo line.length()
     #echo line["blotName"].to(string)
