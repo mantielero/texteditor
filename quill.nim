@@ -16,13 +16,15 @@ type
 
   # https://github.com/quilljs/parchment
   #BlotObj* = JsObject
-  BlotObj* {.importc:"Blot".} = ref object of RootObj# 
-    blotName*: cstring
-    # #className*: string
+  BlotObj* {.importc:"Blot".} = ref object of JsObject# 
+    #blotName*: cstring
+  #   # #className*: string
     length*: proc ():cint {.closure.}
-    # value*: proc():JsObject {.closure.}
+  #   # value*: proc():JsObject {.closure.}
 
-proc blotName(_: typedesc[BlotObj]): cstring {.importCpp: "Blot.blotName".}
+#proc blotName*(_: typedesc[BlotObj]): cstring {.importCpp: "Blot.blotName".}
+
+proc blotName2*(val: BlotObj): cstring {.importCpp: "#.blotName".}
 #[
 const options = {
   debug: 'info',
@@ -95,16 +97,33 @@ proc getSelection*(api:QuillObj; focus:bool = false):tuple[index,length:int] =
 
 
 proc getLineBind(api:QuillObj; index:cint):tuple[line:BlotObj;offset:cint] {.importcpp:"#.getLine(@)".}
+
+proc getLineEx(api:QuillObj; index:cint):seq[JsObject] {.importcpp:"#.getLine(@)".}
+
 # [Blot, Number]
 #proc getLineBind2(api:QuillObj; index:cint):seq[JsObject] {.importcpp:"#.getLine(@)".}
 
-proc getLine*(api:QuillObj; index:int):tuple[line:BlotObj;offset:int] =
-  #var (line,offset) = api.getLineBind2(index.cint)
-  var tmp = api.getLineBind(index.cint)
-  echo "Line: ", tmp[0].length()
-  echo "Offset: ", tmp[1]
-  return tmp
-  #echo repr tmp[1]
-  #return #(BlotObj(tmp[0]), tmp[1].int)
-
 #proc length*(blot:BlotObj):cint {.importcpp:"#.length()".}
+
+# proc getLine*(api:QuillObj; index:int):tuple[line:BlotObj;offset:int] =
+#   #var (line,offset) = api.getLineBind2(index.cint)
+#   echo "ok3"
+#   var tmp = api.getLineBind(index.cint)
+#   echo "ok4"
+#   #echo "Line value: ", tmp[0]
+#   echo "Line: ", tmp[0].length()
+#   #echo "Offset: ", tmp[1]
+#   return (tmp[0], tmp[1].int)
+#   #echo repr tmp[1]
+#   #return #(BlotObj(tmp[0]), tmp[1].int)
+
+
+# proc getLine*(api:QuillObj; index:int):tuple[line:BlotObj;offset:int] =
+#   var tmp = api.getLineEx(index)
+#   echo len(tmp)
+#   echo tmp[1]
+#   echo typeof(BlotObj(tmp[0]))
+
+proc getLineBlot*(api:QuillObj; index:cint):BlotObj {.importcpp:"#.getLine(@)[0]".}
+
+proc getLineOffset*(api:QuillObj; index:cint):cint {.importcpp:"#.getLine(@)[1]".}
